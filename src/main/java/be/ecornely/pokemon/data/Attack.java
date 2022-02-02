@@ -98,28 +98,28 @@ public class Attack implements DataPart {
     public void setAttack1(int index, int pp){
         this.attack1 = ByteUtils.fromInt(index, 2);
         this.pp1 = (byte) pp;
-        this.setAttack(1, this.attack1, pp);
+        this.setAttack(0, this.attack1, pp);
     }
     public void setAttack2(int index, int pp){
         this.attack2 = ByteUtils.fromInt(index, 2);
         this.pp2 = (byte) pp;
-        this.setAttack(2, this.attack2, pp);
+        this.setAttack(1, this.attack2, pp);
     }
     public void setAttack3(int index, int pp){
         this.attack3 = ByteUtils.fromInt(index, 2);
         this.pp3 = (byte) pp;
-        this.setAttack(3, this.attack3, pp);
+        this.setAttack(2, this.attack3, pp);
     }
     public void setAttack4(int index, int pp){
         this.attack4 = ByteUtils.fromInt(index, 2);
         this.pp4 = (byte) pp;
-        this.setAttack(4, this.attack4, pp);
+        this.setAttack(3, this.attack4, pp);
     }
 
     private void setAttack(int attack, byte[] attackBytes, int pp){
         this.bytes[attack*2] = attackBytes[0];
         this.bytes[attack*2+1] = attackBytes[1];
-        this.bytes[7+attack] = (byte) pp;
+        this.bytes[8+attack] = (byte) pp;
         this.pokemonAnalyser.updateDatapart(this);
     }
 }

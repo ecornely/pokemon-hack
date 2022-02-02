@@ -32,8 +32,6 @@ public class Section {
     private final byte[] sectionIdBytes;
     private final short sectionId;
 
-    private final byte[] data;
-
     private final SectionType sectionType;
 
 
@@ -52,11 +50,11 @@ public class Section {
         this.checksum = ByteBuffer.wrap(checksumBytes).order(ByteOrder.LITTLE_ENDIAN).getShort();
         this.sectionIdBytes = Arrays.copyOfRange(bytes, 4084, 4086);
         this.sectionId = ByteBuffer.wrap(sectionIdBytes).order(ByteOrder.LITTLE_ENDIAN).getShort();
-        this.data = Arrays.copyOfRange(bytes, 0, 4084);
         LOGGER.trace("Last bytes are {}", new String(Hex.encodeHex(Arrays.copyOfRange(bytes, 4080, 4096))));
     }
 
     public byte[] calculateChecksumBytes(){
+        byte[] data = Arrays.copyOfRange(bytes, 0, 4084);
         BigInteger sum = BigInteger.ZERO;
         for (int i = 0; i < this.sectionType.dataSize(); i+=4) {
             byte[] bytesToSum = Arrays.copyOfRange(data, i, i+4);
@@ -70,15 +68,11 @@ public class Section {
     }
 
     public void updateChecksumBytes(){
-        LOGGER.debug("Checksum was:{}", ByteUtils.toHexString(this.checksumBytes));
         byte[] newChecksum = this.calculateChecksumBytes();
-        LOGGER.debug("Checksum calculated:{}", ByteUtils.toHexString(newChecksum));
-        LOGGER.debug("End bytes are    {}", ByteUtils.toHexString(Arrays.copyOfRange(bytes, 4084, 4096)));
         this.bytes[4086] = newChecksum[0];
         this.bytes[4087] = newChecksum[1];
         this.checksumBytes = Arrays.copyOfRange(bytes, 4086, 4088);
         this.checksum = ByteBuffer.wrap(checksumBytes).order(ByteOrder.LITTLE_ENDIAN).getShort();
-        LOGGER.debug("End bytes became {}", ByteUtils.toHexString(Arrays.copyOfRange(bytes, 4084, 4096)));
     }
 
     public SectionType getSectionType() {
@@ -92,7 +86,6 @@ public class Section {
     public void setBytes(byte[] bytes) {
         this.bytes = bytes;
         this.updateChecksumBytes();
-        LOGGER.debug("Something changed section's ({}) bytes. Checksum has been set to :{}", this.sectionType, ByteUtils.toHexString(this.getChecksumBytes()));
         this.filePath.toFile().renameTo(this.filePath.resolve(".bak").toFile());
         try(FileOutputStream fos = new FileOutputStream(this.filePath.toFile())){
             IOUtils.write(this.bytes, fos);
@@ -131,10 +124,6 @@ public class Section {
 
     public short getSectionId() {
         return sectionId;
-    }
-
-    public byte[] getData() {
-        return data;
     }
 
     public int getIndex() {

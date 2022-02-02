@@ -36,12 +36,12 @@ public class MaskConverter {
         return value;
     }
 
-    public String toMaskedHexString(int decimal) throws DecoderException{
-        byte[] bytes = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort(toMaskedHexShort(decimal)).array();
-        return new String(Hex.encodeHex(bytes));
-    }
-    public short toMaskedHexShort(int decimal) throws DecoderException{
+    public short toMaskedHexShort(int decimal){
         return (short) (this.mask ^ decimal);
     }
 
+    public byte[] toMaskedBytes(int decimal){
+        byte[] bytes = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putShort(toMaskedHexShort(decimal)).array();
+        return bytes;
+    }
 }

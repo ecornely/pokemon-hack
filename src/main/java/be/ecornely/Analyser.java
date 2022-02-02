@@ -88,12 +88,12 @@ public class Analyser {
         return ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).put(maskBytes).rewind().getShort();
     }
 
-    public void updatePokemon(int pokemonNumber, byte[] pokemonBytes) {
+    public void updatePokemon(int pokemonIndex, byte[] pokemonBytes) {
         Section section = this.getSection(SectionType.TeamItems);
         byte[] teamItemsSectionBytes = section.getBytes();
-        int pokemonStart = 568+((pokemonNumber-1)*600);
-        for (int i = 0; i < 600; i++) {
-            teamItemsSectionBytes[568+i] = pokemonBytes[i];
+        int pokemonStart = 568+((pokemonIndex)*100);
+        for (int i = 0; i < 100; i++) {
+            teamItemsSectionBytes[pokemonStart+i] = pokemonBytes[i];
         }
         section.setBytes(teamItemsSectionBytes);
     }

@@ -72,7 +72,9 @@ public class PokemonAnalyser {
 
         this.decryptedDataBytes = encryptDecryptData(this.encryptedDataBytes);
 
-        this.order = Order.byModulo(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).put(this.personalityBytes).rewind().getInt() % 24);
+        Long personality = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).put(this.personalityBytes).rewind().getLong();
+        Long modulo = personality % 24;
+        this.order = Order.byModulo(modulo.intValue());
         for (int i = 0; i < 4; i++) {
             byte[] bytes = Arrays.copyOfRange(this.decryptedDataBytes, i * 12, (i * 12) + 12);
             char indexedType = this.order.getIndexedType(i);

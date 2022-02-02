@@ -6,13 +6,13 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Application {
 
@@ -24,56 +24,118 @@ public class Application {
 
         split(sourceFile, outFolder);
         Analyser analyser = new Analyser(outFolder);
-        PokemonAnalyser pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_1.bin"));
-        System.out.printf("Team section checksum: %s%n", ByteUtils.toHexString(analyser.getSection(SectionType.TeamItems).getChecksumBytes()));
-        System.out.printf("Team section checksum: %s%n", ByteUtils.toHexString(analyser.getSection(SectionType.TeamItems).calculateChecksumBytes()));
-        pkAnalyser.getAttack().setAttack1(58, 10);
-//        pkAnalyser.getAttack().setAttack2(323, 5);
-//        pkAnalyser.getAttack().setAttack3(91, 10);
-//        pkAnalyser.getAttack().setAttack3(188, 10);
-        outFolder.resolve("team_pokemon_1.bin").toFile().renameTo(outFolder.resolve("team_pokemon_1.bin.bak").toFile());
-        try(FileOutputStream fos = new FileOutputStream(outFolder.resolve("team_pokemon_1.bin").toFile())) {
-            IOUtils.write(pkAnalyser.getBytes(), fos);
-        }
+        PokemonAnalyser pkAnalyser;
+        pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_0.bin"));
+        pkAnalyser.getAttack().setAttack1(323, 5);
+        pkAnalyser.getAttack().setAttack2(58, 16);
+        pkAnalyser.getAttack().setAttack3(341, 15);
+        pkAnalyser.getAttack().setAttack4(188, 10);
+        System.out.printf("Pokemon 0 is %s%n", pkAnalyser.toString());
+        analyser.updatePokemon(0, pkAnalyser.getBytes());
+
+        pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_1.bin"));
+        pkAnalyser.getAttack().setAttack1(354, 8);
+        pkAnalyser.getAttack().setAttack2(247, 15);
+        pkAnalyser.getAttack().setAttack3(94, 10);
+        pkAnalyser.getAttack().setAttack4(100, 20);
+        System.out.printf("Pokemon 1 is %s%n", pkAnalyser.toString());
         analyser.updatePokemon(1, pkAnalyser.getBytes());
 
-        joinTeam(outFolder, analyser);
+        pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_2.bin"));
+        pkAnalyser.getAttack().setAttack1(157, 10);
+        pkAnalyser.getAttack().setAttack2(231, 15);
+        pkAnalyser.getAttack().setAttack3(344, 15);
+        pkAnalyser.getAttack().setAttack4(276, 5);
+        System.out.printf("Pokemon 2 is %s%n", pkAnalyser.toString());
+        analyser.updatePokemon(2, pkAnalyser.getBytes());
 
-//        combine(outFolder);
-//        Analyser analyser = new Analyser(outFolder);
-//        System.out.printf("99 should be written: %s%n",analyser.getMaskConverter().toMaskedHexString(99));
-//        System.out.printf("96 should be written: %s%n",analyser.getMaskConverter().toMaskedHexString(96));
-//        System.out.printf("15244 should be written: %s%n",analyser.getMaskConverter().toMaskedHexString(15244));
-//        System.out.printf("5 should be written: %s%n",analyser.getMaskConverter().toMaskedHexString(5));
+        pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_4.bin"));
+        pkAnalyser.getAttack().setAttack1(332, 20);
+        pkAnalyser.getAttack().setAttack2(19, 15);
+        pkAnalyser.getAttack().setAttack3(148, 20);
+        pkAnalyser.getAttack().setAttack4(15, 30);
+        System.out.printf("Pokemon 4 is %s%n", pkAnalyser.toString());
+        analyser.updatePokemon(4, pkAnalyser.getBytes());
+
+        pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_5.bin"));
+        pkAnalyser.getAttack().setAttack1(284, 5);
+        pkAnalyser.getAttack().setAttack2(76, 10);
+        pkAnalyser.getAttack().setAttack3(249, 15);
+        pkAnalyser.getAttack().setAttack4(70, 15);
+        System.out.printf("Pokemon 5 is %s%n", pkAnalyser.toString());
+        analyser.updatePokemon(5, pkAnalyser.getBytes());
 //
-//        System.out.printf("f40d is %d%n",analyser.getMaskConverter().toDecimal((short)0xf40d));
-//        System.out.printf("324b is %d%n",analyser.getMaskConverter().toDecimal((short)0x324b));
+        updateBag(analyser);
+
+        IOUtils.write(analyser.join(), new FileOutputStream(analyser.getSplittedFolder().resolve("emeraude.sav").toFile()));
+
     }
 
-    private static void joinTeam(Path splittedFolder, Analyser analyser) throws IOException {
-        ByteBuffer teamBytes = ByteBuffer.allocate(600);
-        for (int i = 0; i < 6; i++) {
-            try(FileInputStream fis = new FileInputStream(splittedFolder.resolve(String.format("team_pokemon_%d.bin", i)).toFile())) {
-                byte[] pokemon = IOUtils.toByteArray(fis);
-                teamBytes.put(pokemon);
-            }
-        }
-        splittedFolder.resolve("team.bin").toFile().renameTo(splittedFolder.resolve("team.bin.bak").toFile());
-        try(FileOutputStream fos = new FileOutputStream(splittedFolder.resolve("team.bin").toFile())){
-            fos.write(teamBytes.array());
-            fos.flush();
-        }
+    private static void updateBag(Analyser analyser) {
         Section section = analyser.getSection(SectionType.TeamItems);
-        byte[] teamItemsSectionBytes = section.getBytes();
-        System.out.printf("Team section was:%s%n", ByteUtils.toHexString(teamItemsSectionBytes));
-        for (int i = 0; i < 600; i++) {
-            teamItemsSectionBytes[568+i] = teamBytes.get(i);
-        }
-        System.out.printf("Team section is :%s%n", ByteUtils.toHexString(teamItemsSectionBytes));
-        section.setBytes(teamItemsSectionBytes);
-        try(FileOutputStream fos = new FileOutputStream(analyser.getSplittedFolder().resolve("emeraude.sav").toFile())) {
-            IOUtils.write(analyser.join(), fos);
-        }
+        byte[] sectionBytes = section.getBytes();
+        MaskConverter maskConverter = analyser.getMaskConverter();
+
+        TreeMap<Integer, Integer> forced_items = getForcedItems();
+        AtomicInteger i = new AtomicInteger();
+        i.set(0);
+        forced_items.entrySet().forEach(e -> {
+            int itemStart = 0x0560+(i.getAndIncrement()*4);
+            byte[] item = ByteUtils.fromInt(e.getKey(), 2);
+            byte[] quantity = maskConverter.toMaskedBytes(e.getValue());
+            sectionBytes[itemStart] = item[0];
+            sectionBytes[itemStart+1] = item[1];
+            sectionBytes[itemStart+2] = quantity[0];
+            sectionBytes[itemStart+3] = quantity[1];
+        });
+
+        TreeMap<Integer, Integer> forced_pokeballs = getForcedPokeBalls();
+        i.set(0);
+        forced_pokeballs.entrySet().forEach(e -> {
+            int itemStart = 0x0650+(i.getAndIncrement()*4);
+            byte[] item = ByteUtils.fromInt(e.getKey(), 2);
+            byte[] quantity = maskConverter.toMaskedBytes(e.getValue());
+            sectionBytes[itemStart] = item[0];
+            sectionBytes[itemStart+1] = item[1];
+            sectionBytes[itemStart+2] = quantity[0];
+            sectionBytes[itemStart+3] = quantity[1];
+        });
+
+        section.setBytes(sectionBytes);
+    }
+
+    private static TreeMap<Integer, Integer> getForcedItems() {
+        TreeMap<Integer, Integer> forced_items = new TreeMap<>();
+        forced_items.put(0x13, 99); // Full restore (heal)
+        forced_items.put(0x19, 99); // Max revive (restore fainted)
+        forced_items.put(0x23, 99); // Max ether (restore PP of a single move)
+        forced_items.put(0x17, 99); // Full heal (remove statuses)
+        forced_items.put(0x25, 99); // Max elixir (restore PP of all moves)
+        forced_items.put(0x54, 99); // Max repel (repel pokemons)
+        forced_items.put(0x47, 99); // PP Max (increase max PP of a move)
+        forced_items.put(0x3f, 99); // HP Up (increase HP)
+        forced_items.put(0x44, 99); // Rare candy (increase lvl)
+        forced_items.put(0x40, 99); // Protein
+        forced_items.put(0x41, 99); // Iron
+        forced_items.put(0x42, 99); // Carbos
+        forced_items.put(0x45, 99); // Calcium
+        forced_items.put(0x46, 99); // Zinc
+        forced_items.put(0x49, 99); // Gard spec.
+        forced_items.put(0x4a, 99); // Dire hit
+        forced_items.put(0x4b, 99); // X attack
+        forced_items.put(0x4c, 99); // X Defend
+        forced_items.put(0x4d, 99); // X Speed
+        forced_items.put(0x4e, 99); // X accuracy
+        forced_items.put(0x4f, 99); // X Special
+        return forced_items;
+    }
+
+    private static TreeMap<Integer, Integer> getForcedPokeBalls() {
+        TreeMap<Integer, Integer> forced_pokeballs = new TreeMap<>();
+        forced_pokeballs.put(0x01, 99); // Master Ball
+        forced_pokeballs.put(0x04, 99); // Poke Ball
+        forced_pokeballs.put(0x0b, 99); // Luxury
+        return forced_pokeballs;
     }
 
     private static void extractTeam(Path splittedFolder) throws IOException {
@@ -103,10 +165,4 @@ public class Application {
         }
     }
 
-    @Deprecated
-    private static void combine(Path splittedFolder) throws IOException {
-        Analyser analyser = new Analyser(splittedFolder);
-        analyser.getSection(SectionType.TeamItems).updateChecksumBytes();
-        IOUtils.write(analyser.join(), new FileOutputStream(analyser.getSplittedFolder().resolve("emeraude.sav").toFile()));
-    }
 }
