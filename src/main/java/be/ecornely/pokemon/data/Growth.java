@@ -52,7 +52,7 @@ public class Growth implements DataPart{
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Growth: [");
-        sb.append(String.format("species: 0x%s(%d)", toHexString(speciesBytes), toInt(speciesBytes)));
+        sb.append(String.format("species: %s (0x%s - %d)", PokemonDetail.getPokemonMap().get(toInt(speciesBytes)).getName(), toHexString(speciesBytes), toInt(speciesBytes)));
         sb.append(", ");
         sb.append(String.format("item: 0x%s(%d)", toHexString(itemBytes), toInt(itemBytes)));
         sb.append(", ");

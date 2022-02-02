@@ -22,7 +22,7 @@ public class Application {
         Path outFolder = Paths.get("/home/corne/Games/pokemon/split");
         Path sourceFile = Paths.get("/home/corne/Games/pokemon/emeraude.sav.ok");
 
-        split(sourceFile, outFolder);
+//        split(sourceFile, outFolder);
         Analyser analyser = new Analyser(outFolder);
         PokemonAnalyser pkAnalyser;
         pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_0.bin"));
@@ -31,7 +31,7 @@ public class Application {
         pkAnalyser.getAttack().setAttack3(341, 15);
         pkAnalyser.getAttack().setAttack4(188, 10);
         System.out.printf("Pokemon 0 is %s%n", pkAnalyser.toString());
-        analyser.updatePokemon(0, pkAnalyser.getBytes());
+//        analyser.updatePokemon(0, pkAnalyser.getBytes());
 
         pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_1.bin"));
         pkAnalyser.getAttack().setAttack1(354, 8);
@@ -39,7 +39,7 @@ public class Application {
         pkAnalyser.getAttack().setAttack3(94, 10);
         pkAnalyser.getAttack().setAttack4(100, 20);
         System.out.printf("Pokemon 1 is %s%n", pkAnalyser.toString());
-        analyser.updatePokemon(1, pkAnalyser.getBytes());
+//        analyser.updatePokemon(1, pkAnalyser.getBytes());
 
         pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_2.bin"));
         pkAnalyser.getAttack().setAttack1(157, 10);
@@ -47,7 +47,7 @@ public class Application {
         pkAnalyser.getAttack().setAttack3(344, 15);
         pkAnalyser.getAttack().setAttack4(276, 5);
         System.out.printf("Pokemon 2 is %s%n", pkAnalyser.toString());
-        analyser.updatePokemon(2, pkAnalyser.getBytes());
+//        analyser.updatePokemon(2, pkAnalyser.getBytes());
 
         pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_4.bin"));
         pkAnalyser.getAttack().setAttack1(332, 20);
@@ -55,7 +55,7 @@ public class Application {
         pkAnalyser.getAttack().setAttack3(148, 20);
         pkAnalyser.getAttack().setAttack4(15, 30);
         System.out.printf("Pokemon 4 is %s%n", pkAnalyser.toString());
-        analyser.updatePokemon(4, pkAnalyser.getBytes());
+//        analyser.updatePokemon(4, pkAnalyser.getBytes());
 
         pkAnalyser = new PokemonAnalyser(outFolder.resolve("team_pokemon_5.bin"));
         pkAnalyser.getAttack().setAttack1(284, 5);
@@ -63,11 +63,11 @@ public class Application {
         pkAnalyser.getAttack().setAttack3(249, 15);
         pkAnalyser.getAttack().setAttack4(70, 15);
         System.out.printf("Pokemon 5 is %s%n", pkAnalyser.toString());
-        analyser.updatePokemon(5, pkAnalyser.getBytes());
+//        analyser.updatePokemon(5, pkAnalyser.getBytes());
 //
-        updateBag(analyser);
+//        updateBag(analyser);
 
-        IOUtils.write(analyser.join(), new FileOutputStream(analyser.getSplittedFolder().resolve("emeraude.sav").toFile()));
+//        IOUtils.write(analyser.join(), new FileOutputStream(analyser.getSplittedFolder().resolve("emeraude.sav").toFile()));
 
     }
 

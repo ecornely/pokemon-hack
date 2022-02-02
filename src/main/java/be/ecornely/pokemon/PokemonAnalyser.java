@@ -1,6 +1,7 @@
 package be.ecornely.pokemon;
 
 import be.ecornely.ByteUtils;
+import be.ecornely.Charmap;
 import be.ecornely.pokemon.data.*;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -116,11 +117,11 @@ public class PokemonAnalyser {
         return "PokemonAnalyser{" +
                 "\n personalityBytes=" + ByteUtils.toHexString(personalityBytes) +
                 "\n originalTrainerBytes=" + ByteUtils.toHexString(originalTrainerBytes) +
-                "\n nicknameBytes=" + ByteUtils.toHexString(nicknameBytes) +
+                "\n nicknameBytes=" + Charmap.translate(nicknameBytes) + "(" + ByteUtils.toHexString(nicknameBytes) + ")" +
                 "\n language=" + Byte.toUnsignedInt(language) +
                 ", egg=" + Byte.toUnsignedInt(egg) +
                 ", marking=" + Byte.toUnsignedInt(marking) +
-                "\n originalTrainerNameBytes=" + ByteUtils.toHexString(originalTrainerNameBytes) +
+                "\n originalTrainerNameBytes=" + Charmap.translate(originalTrainerNameBytes) + "(" + ByteUtils.toHexString(originalTrainerNameBytes) + ")" +
                 "\n checksumBytes=" + ByteUtils.toHexString(this.checksumBytes) +
                 "\n encryptedDataBytes=" + ByteUtils.toHexString(this.encryptedDataBytes) +
                 "\n decryptedDataBytes=" + ByteUtils.toHexString(this.decryptedDataBytes) +
