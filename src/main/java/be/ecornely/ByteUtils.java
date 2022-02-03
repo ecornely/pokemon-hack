@@ -64,4 +64,8 @@ public class ByteUtils {
     public static byte[] fromInt(int value, int size) {
         return Arrays.copyOfRange(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value).array(), 0, size);
     }
+
+    public static byte[] fromLong(long value, int size) {
+        return Arrays.copyOfRange(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(value).array(), 0, size);
+    }
 }
