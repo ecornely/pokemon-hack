@@ -1,6 +1,7 @@
-package be.ecornely.pokemon.data;
+package be.ecornely.pokemon.data.effortvalues;
 
 import be.ecornely.pokemon.PokemonAnalyser;
+import be.ecornely.pokemon.data.DataPart;
 
 public class EffortValues implements DataPart {
     private final byte[] bytes;

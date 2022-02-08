@@ -1,4 +1,4 @@
-package be.ecornely.pokemon.data;
+package be.ecornely.pokemon.data.attack;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

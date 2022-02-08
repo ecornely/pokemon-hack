@@ -68,4 +68,51 @@ public class ByteUtils {
     public static byte[] fromLong(long value, int size) {
         return Arrays.copyOfRange(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(value).array(), 0, size);
     }
+
+    public static String toBinaryString(BitSet bits) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bits.length(); i++) {
+            sb.append(bits.get(i) ? '1': '0');
+        }
+        return sb.toString();
+    }
+
+    public static boolean[] fromBinaryString(String s) {
+        boolean[] bits = new boolean[s.length()];
+        for (int i = 0; i <s.length(); i++) {
+            bits[i] = s.charAt(i) == '1' ? true : false;
+        }
+        return bits;
+    }
+
+    public static byte[] fromBits(boolean[] bits) {
+        int byteCount = (int) (bits.length / 8);
+        int missingBits = 0;
+        if (bits.length % 8 != 0){
+            missingBits = 8 - (bits.length % 8);
+        }
+        if(missingBits>0) byteCount++;
+        byte[] bytes = new byte[byteCount];
+        boolean[] completeBits = new boolean[bits.length + missingBits];
+        Arrays.fill(completeBits, false);
+        for (int i = 0; i < bits.length; i++) {
+            completeBits[missingBits+i] = bits[i];
+        }
+        for (int i = 0; i < byteCount; i++) {
+            String byteString = ByteUtils.toBinaryString(Arrays.copyOfRange(completeBits, i * 8, (i * 8) + 8));
+            byte b = (byte) Integer.parseInt(byteString, 2);
+            bytes[i] = b;
+        }
+        return bytes;
+    }
+
+    public static byte[] fromHexString(String s) {
+        byte[] bytes = new byte[s.length()/2];
+        for (int i = 0; i < bytes.length; i++) {
+            String byteString = s.substring(i*2, i*2+2);
+            byte b = (byte) Integer.parseInt(byteString, 16);
+            bytes[i] = b;
+        }
+        return bytes;
+    }
 }

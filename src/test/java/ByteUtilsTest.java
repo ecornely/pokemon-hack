@@ -1,6 +1,8 @@
 import be.ecornely.ByteUtils;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsArrayContaining;
 import org.junit.jupiter.api.Test;
 
 import java.util.BitSet;
@@ -71,5 +73,39 @@ public class ByteUtilsTest {
 
         System.out.printf("0x%s%n", ByteUtils.toHexString(ByteUtils.fromInt(-3, 1)));
         System.out.printf("0x%x%n", (byte)252);
+    }
+
+    @Test
+    public void fromBinaryString() {
+        boolean[] booleans = ByteUtils.fromBinaryString("1000111100001001");
+        boolean[] expected = new boolean[] {true, false, false, false, true, true, true, true, false, false, false, false, true, false, false, true};
+        assertThat(booleans, Matchers.is(expected));
+
+        booleans = ByteUtils.fromBinaryString("111100001001");
+        expected = new boolean[] {true, true, true, true, false, false, false, false, true, false, false, true};
+        assertThat(booleans, Matchers.is(expected));
+    }
+
+    @Test
+    public void fromBits() {
+        boolean[] bits = new boolean[] {true, false, false, false, true, true, true, true, false, false, false, false, true, false, false, true};
+        byte[] bytes = ByteUtils.fromBits(bits);
+        byte[] expected = new byte[] {(byte)0x8f, 0x09};
+        assertThat(bytes, Matchers.is(expected));
+
+        bits = new boolean[] {false, false, false, false, true, true, true, true, false, false, false, false, true, false, false, true};
+        bytes = ByteUtils.fromBits(bits);
+        expected = new byte[] {(byte)0x0f, 0x09};
+        assertThat(bytes, Matchers.is(expected));
+
+        bits = new boolean[] {true, true, true, true, false, false, false, false, true, false, false, true};
+        bytes = ByteUtils.fromBits(bits);
+        expected = new byte[] {(byte)0x0f, 0x09};
+        assertThat(bytes, Matchers.is(expected));
+
+        bits = new boolean[]{false, false, false, false, true, false, true};
+        bytes = ByteUtils.fromBits(bits);
+        expected = new byte[] {(byte)0x05};
+        assertThat(bytes, Matchers.is(expected));
     }
 }

@@ -1,7 +1,9 @@
-package be.ecornely.pokemon.data;
+package be.ecornely.pokemon.data.attack;
 
 import be.ecornely.ByteUtils;
 import be.ecornely.pokemon.PokemonAnalyser;
+import be.ecornely.pokemon.data.DataPart;
+import be.ecornely.pokemon.data.attack.AttackDetail;
 
 import java.util.Arrays;
 import java.util.Map;

@@ -1,19 +1,17 @@
-package be.ecornely.pokemon.data;
+package be.ecornely.pokemon.data.growth;
 
 import be.ecornely.ByteUtils;
 import be.ecornely.pokemon.PokemonAnalyser;
-import com.google.common.primitives.Booleans;
+import be.ecornely.pokemon.data.DataPart;
+import be.ecornely.pokemon.data.growth.PokemonDetail;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.util.streamex.StreamEx;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 import static be.ecornely.ByteUtils.toHexString;
 import static be.ecornely.ByteUtils.toInt;
 
-public class Growth implements DataPart{
+public class Growth implements DataPart {
     private final byte[] bytes;
     private byte[] speciesBytes;
     private byte[] itemBytes;

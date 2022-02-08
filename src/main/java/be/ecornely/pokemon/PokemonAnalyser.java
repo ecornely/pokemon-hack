@@ -3,11 +3,14 @@ package be.ecornely.pokemon;
 import be.ecornely.ByteUtils;
 import be.ecornely.Charmap;
 import be.ecornely.pokemon.data.*;
+import be.ecornely.pokemon.data.attack.Attack;
+import be.ecornely.pokemon.data.effortvalues.EffortValues;
+import be.ecornely.pokemon.data.growth.Growth;
+import be.ecornely.pokemon.data.misc.Misc;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.crypto.Data;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -47,7 +50,10 @@ public class PokemonAnalyser {
     private final HashMap<Character, DataPart> dataParts = new HashMap<>();
 
     public PokemonAnalyser(Path pokemonFile) throws IOException {
-        this.bytes = IOUtils.toByteArray(new FileInputStream(pokemonFile.toFile()));
+        this(IOUtils.toByteArray(new FileInputStream(pokemonFile.toFile())));
+    }
+    public PokemonAnalyser(byte[] bytes) throws IOException {
+        this.bytes = bytes;
         this.personalityBytes = Arrays.copyOfRange(this.bytes, 0, 4);
         this.originalTrainerBytes = Arrays.copyOfRange(this.bytes, 4, 8);
         this.nicknameBytes = Arrays.copyOfRange(this.bytes, 8, 18);
@@ -77,17 +83,17 @@ public class PokemonAnalyser {
         Long modulo = personality % 24;
         this.order = Order.byModulo(modulo.intValue());
         for (int i = 0; i < 4; i++) {
-            byte[] bytes = Arrays.copyOfRange(this.decryptedDataBytes, i * 12, (i * 12) + 12);
+            byte[] dataBytes = Arrays.copyOfRange(this.decryptedDataBytes, i * 12, (i * 12) + 12);
             char indexedType = this.order.getIndexedType(i);
             switch(indexedType){
                 case 'G':
-                    this.dataParts.put(indexedType, new Growth(bytes, this));
+                    this.dataParts.put(indexedType, new Growth(dataBytes, this));
                 break;
                 case 'A':
-                    this.dataParts.put(indexedType, new Attack(bytes, this));
+                    this.dataParts.put(indexedType, new Attack(dataBytes, this));
                 break;
                 case 'M':
-                    this.dataParts.put(indexedType, new Misc(bytes, this));
+                    this.dataParts.put(indexedType, new Misc(dataBytes, this));
                 break;
                 case 'E':
                     this.dataParts.put(indexedType, new EffortValues(bytes, this));
