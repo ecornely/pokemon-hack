@@ -20,11 +20,6 @@ public class ByteUtilsTest {
         assertThat(ByteUtils.toLong(uint), equalTo(50683L));
         uint = new byte[]{(byte) 0xfb, (byte) 0xc5, 0x00, 0x01};
         assertThat(ByteUtils.toLong(uint), equalTo(16827899L));
-
-        //TODO pass more bytes
-
-        //TODO pass less bytes
-
     }
 
     @Test
@@ -36,10 +31,6 @@ public class ByteUtilsTest {
         assertThat(ByteUtils.toInt(ushort), equalTo(256));
         ushort = new byte[]{0x01, 0x00};
         assertThat(ByteUtils.toInt(ushort), equalTo(1));
-
-        //TODO pass more bytes
-
-        //TODO pass less bytes
     }
 
     @Test

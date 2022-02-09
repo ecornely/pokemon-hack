@@ -142,6 +142,7 @@ public class PokemonAnalyser {
                 ", special attack=" + ByteUtils.toInt(specialAttackBytes) +
                 ", special defense=" + ByteUtils.toInt(specialDefenseBytes) +
                 "\n order=" + order +
+                "\n hiddenPower=" + this.calculateHiddenPowerType() + "(" + this.calculateHiddenPowerValue() + ")" +
                 "\n}";
     }
 

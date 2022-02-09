@@ -8,8 +8,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 
-import static be.ecornely.ByteUtils.toHexString;
-import static be.ecornely.ByteUtils.toInt;
+import static be.ecornely.ByteUtils.*;
 
 public class Growth implements DataPart {
     private final byte[] bytes;
@@ -63,9 +62,9 @@ public class Growth implements DataPart {
         sb.append(", ");
         sb.append(String.format("item: 0x%s(%d)", toHexString(itemBytes), toInt(itemBytes)));
         sb.append(", ");
-        sb.append(String.format("experience: 0x%s", toHexString(experienceBytes)));
+        sb.append(String.format("experience: 0x%s (%d)", toHexString(experienceBytes), toLong(experienceBytes)));
         sb.append(", ");
-        sb.append(String.format("PP bonuses: 0x%02x(%d)", powerPointBonuses, powerPointBonuses));
+        sb.append(String.format("PP bonuses: 0x%02x(%s)", powerPointBonuses, ppBonusToString(powerPointBonuses)));
         sb.append(", ");
         sb.append(String.format("friendship: 0x%02x(%d)", friendship, Byte.toUnsignedInt(friendship)));
         sb.append("]");
@@ -127,6 +126,15 @@ public class Growth implements DataPart {
         this.friendship = (byte) friendship;
         this.bytes[9] = this.friendship;
         this.pokemonAnalyser.updateDatapart(this);
+    }
+
+    public String ppBonusToString(byte ppBonus){
+        String bits = toBinaryString(ppBonus);
+        int move1 = Integer.parseInt(bits.substring(0, 2), 2);
+        int move2 = Integer.parseInt(bits.substring(2, 4), 2);
+        int move3 = Integer.parseInt(bits.substring(4, 6), 2);
+        int move4 = Integer.parseInt(bits.substring(6, 8), 2);
+        return String.format("move1:%d, move2:%d, move3:%d, move4:%d", move1, move2, move3, move4);
     }
 
 }

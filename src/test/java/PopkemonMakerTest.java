@@ -14,11 +14,8 @@ public class PopkemonMakerTest {
         }
         PokemonAnalyser pkAnalyser = new PokemonAnalyser(zeroed);
         System.out.printf("%s%n", pkAnalyser.toString());
-        System.out.printf("HiddenPower: %s (%d)%n", pkAnalyser.calculateHiddenPowerType(), pkAnalyser.calculateHiddenPowerValue());
 
     }
-
-    //TODO find where happiness is and what value it can have? on http://www.ppnstudio.com/maker/
 
 
 }
