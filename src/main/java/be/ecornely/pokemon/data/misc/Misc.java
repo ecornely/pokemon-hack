@@ -5,12 +5,18 @@ import be.ecornely.pokemon.PokemonAnalyser;
 import be.ecornely.pokemon.data.DataPart;
 import be.ecornely.pokemon.data.misc.IndividualValues;
 import be.ecornely.pokemon.data.misc.Origin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static be.ecornely.ByteUtils.toHexString;
 
 public class Misc implements DataPart {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Misc.class);
+
     private final byte[] bytes;
     private final PokemonAnalyser pokemonAnalyser;
 
@@ -50,15 +56,14 @@ public class Misc implements DataPart {
         this.metLocation = bytes[1];
         this.origin = new Origin(Arrays.copyOfRange(bytes, 2, 4), this);
 
-        byte[] ivEggAbilityBytes = Arrays.copyOfRange(bytes, 4, 8);
-
+        byte[] ivEggAbilityBytes = swap4Bytes(Arrays.copyOfRange(bytes, 4, 8));
         boolean[] ivEggAbilityBits = ByteUtils.toBits(ivEggAbilityBytes);
         System.out.printf("ivEggAbilityBytes          = %s%n", toHexString(ivEggAbilityBytes));
         System.out.printf("ivEggAbilityBits          = %s%n", ByteUtils.toBinaryString(ivEggAbilityBytes));
 
         this.individualValues = new IndividualValues(ivEggAbilityBits, this);
-        this.egg = ivEggAbilityBits[25];
-        this.ability = ivEggAbilityBits[24];
+        this.egg = ivEggAbilityBits[1];
+        this.ability = ivEggAbilityBits[0];
         this.ribbonsObedienceBytes = Arrays.copyOfRange(bytes, 8, 12);
     }
 
@@ -129,21 +134,41 @@ public class Misc implements DataPart {
 
     private void updateIvEggAbilityBytes() {
         boolean[] ivEggAbilityBits = new boolean[32];
+        ivEggAbilityBits[0] = this.ability;
+        ivEggAbilityBits[1] = this.egg;
         boolean[] ivBits = this.individualValues.getBits();
         for (int i = 0; i < 30; i++) {
-            ivEggAbilityBits[i] = ivBits[i];
+            ivEggAbilityBits[i+2] = ivBits[i];
         }
-        ivEggAbilityBits[30] = this.egg;
-        ivEggAbilityBits[31] = this.ability;
-        byte[] ivEggAbilityBytes = ByteUtils.fromBits(ivEggAbilityBits);
+        LOGGER.debug("Recomposed ivEggAbilityBits: {}", ByteUtils.toBinaryString(ivEggAbilityBits));
+        byte[] ivEggAbilityBytes = swap4Bytes(ByteUtils.fromBits(ivEggAbilityBits));
 
         for (int i = 0; i < ivEggAbilityBytes.length; i++) {
             this.bytes[4+i] = ivEggAbilityBytes[i];
         }
-
-        System.out.printf("ivEggAbilityBytes updated to = %s%n", toHexString(ivEggAbilityBytes));
-        System.out.printf("ivEggAbilityBits updated to  = %s%n", ByteUtils.toBinaryString(ByteUtils.toBits(ivEggAbilityBytes)));
+        LOGGER.debug("Updated ivEggAbilityBytes are now: {}", ByteUtils.toHexString(ivEggAbilityBytes));
 
         this.pokemonAnalyser.updateDatapart(this);
+    }
+
+    public static byte[] swap4Bytes(byte[] bytes) {
+        byte[] newBytes = new byte[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            newBytes[i] = bytes[bytes.length-1-i];
+        }
+        return newBytes;
+    }
+
+    public static String splitIVEggAbilityBinaryString(byte[] bytes) {
+        String binaryString = ByteUtils.toBinaryString(bytes);
+        ArrayList<String> parts = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            int from = 32 - (i * 5) - 5;
+            int to = 32 - (i * 5);
+            parts.add(binaryString.substring(from, to));
+        }
+        parts.add(binaryString.substring(1, 2));
+        parts.add(binaryString.substring(0, 1));
+        return parts.stream().collect(Collectors.joining(" "));
     }
 }

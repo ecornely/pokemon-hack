@@ -213,4 +213,25 @@ public class PokemonAnalyser {
         return (EffortValues) this.getDataPart('E');
     }
 
+    public HiddenPower calculateHiddenPowerType(){
+        int a = this.getMisc().getIndividualValues().getHitPoint() % 2 == 0 ? 0 : 1;
+        int b = this.getMisc().getIndividualValues().getAttack() % 2 == 0 ? 0 : 1;
+        int c = this.getMisc().getIndividualValues().getDefense() % 2 == 0 ? 0 : 1;
+        int d = this.getMisc().getIndividualValues().getSpeed() % 2 == 0 ? 0 : 1;
+        int e = this.getMisc().getIndividualValues().getSpecialAttack() % 2 == 0 ? 0 : 1;
+        int f = this.getMisc().getIndividualValues().getSpecialDefense() % 2 == 0 ? 0 : 1;
+        int hpType = ((a+2*b+4*c+8*d+16*e+32*f)*5)/21;
+        return HiddenPower.ofValue(hpType);
+    }
+
+    public Object calculateHiddenPowerValue() {
+        int u = (this.getMisc().getIndividualValues().getHitPoint() % 4 == 2) || (this.getMisc().getIndividualValues().getHitPoint() % 4 == 3) ? 1 : 0;
+        int v = (this.getMisc().getIndividualValues().getAttack() % 4 == 2) || (this.getMisc().getIndividualValues().getAttack() % 4 == 3)  ? 1 : 0;
+        int w = (this.getMisc().getIndividualValues().getSpecialDefense() % 4 == 2) || (this.getMisc().getIndividualValues().getSpecialDefense() % 4 == 3)  ? 1 : 0;
+        int x = (this.getMisc().getIndividualValues().getDefense() % 4 == 2) || (this.getMisc().getIndividualValues().getDefense() % 4 == 3)  ? 1 : 0;
+        int y = (this.getMisc().getIndividualValues().getSpeed() % 4 == 2) || (this.getMisc().getIndividualValues().getSpeed() % 4 == 3)  ? 1 : 0;
+        int z = (this.getMisc().getIndividualValues().getSpecialAttack() % 4 == 2) || (this.getMisc().getIndividualValues().getSpecialAttack() % 4 == 3)  ? 1 : 0;
+        int hpValue = ((int) Math.floor((((u+2*v+4*w+8*x+16*y+32*z)*40)/63d)))+30;
+        return hpValue;
+    }
 }

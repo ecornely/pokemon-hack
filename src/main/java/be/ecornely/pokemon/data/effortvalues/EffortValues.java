@@ -34,6 +34,8 @@ public class EffortValues implements DataPart {
         this.smartness = Byte.toUnsignedInt(bytes[9]);
         this.toughness = Byte.toUnsignedInt(bytes[10]);
         this.feel = Byte.toUnsignedInt(bytes[11]);
+
+        //TODO compare with http://www.ppnstudio.com/maker/ it should all be 0 and I have a lot pf values there
     }
 
     @Override

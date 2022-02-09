@@ -18,14 +18,13 @@ public class IndividualValues {
 
     public IndividualValues(boolean[] bits, Misc misc) {
         this.misc = misc;
-        this.bits = bits; //TODO ensure byte order is OK
-
-        this.hitPoint = Arrays.copyOfRange(bits, 3,8);
-        this.attack = new boolean[] { this.bits[14], this.bits[15], this.bits[0], this.bits[1], this.bits[2] };
-        this.defense = Arrays.copyOfRange(bits, 9,14);
-        this.speed = new boolean[] { this.bits[20], this.bits[21], this.bits[22], this.bits[23], this.bits[8] };
-        this.specialAttack = new boolean[] { this.bits[31], this.bits[16], this.bits[17], this.bits[18], this.bits[19] };
-        this.specialDefense = Arrays.copyOfRange(bits, 25,30);
+        this.bits = bits;
+        this.hitPoint = Arrays.copyOfRange(bits, 32-5,32);
+        this.attack = Arrays.copyOfRange(bits, 32-10,32-5);
+        this.defense = Arrays.copyOfRange(bits, 32-15,32-10);
+        this.speed = Arrays.copyOfRange(bits, 32-20,32-15);
+        this.specialAttack = Arrays.copyOfRange(bits, 32-25,32-20);
+        this.specialDefense = Arrays.copyOfRange(bits, 32-30,32-25);
     }
 
     public boolean[] getBits(){
@@ -81,40 +80,63 @@ public class IndividualValues {
     }
 
     public void setHitPoint(int hp) {
-        //TODO
+        if(hp>31) throw new IllegalArgumentException("IV max is 31");
+        boolean[] bits = ByteUtils.fromBinaryString(String.format("%8s",Integer.toBinaryString((byte)hp)).replaceAll(" ", "0").substring(3,8));
+        this.hitPoint = bits;
+        for (int i = 0; i < bits.length; i++) {
+            this.bits[32-5+i] = bits[i];
+        }
         this.misc.updateIndividualValues(this);
     }
 
     public void setAttack(int attack) {
-        //TODO
+        if(attack>31) throw new IllegalArgumentException("IV max is 31");
+        boolean[] bits = ByteUtils.fromBinaryString(String.format("%8s",Integer.toBinaryString((byte)attack)).replaceAll(" ", "0").substring(3,8));
+        this.attack = bits;
+        for (int i = 0; i < bits.length; i++) {
+            this.bits[32-10+i] = bits[i];
+        }
         this.misc.updateIndividualValues(this);
     }
 
     public void setDefense(int defense) {
-        //TODO
+        if(defense>31) throw new IllegalArgumentException("IV max is 31");
+        boolean[] bits = ByteUtils.fromBinaryString(String.format("%8s",Integer.toBinaryString((byte)defense)).replaceAll(" ", "0").substring(3,8));
+        this.defense = bits;
+        for (int i = 0; i < bits.length; i++) {
+            this.bits[32-15+i] = bits[i];
+        }
         this.misc.updateIndividualValues(this);
     }
 
     public void setSpeed(int speed) {
-        //TODO
+        if(speed>31) throw new IllegalArgumentException("IV max is 31");
+        boolean[] bits = ByteUtils.fromBinaryString(String.format("%8s",Integer.toBinaryString((byte)speed)).replaceAll(" ", "0").substring(3,8));
+        this.speed = bits;
+        for (int i = 0; i < bits.length; i++) {
+            this.bits[32-20+i] = bits[i];
+        }
         this.misc.updateIndividualValues(this);
     }
 
     public void setSpecialAttack(int specialAttack) {
-        //TODO
+        if(specialAttack>31) throw new IllegalArgumentException("IV max is 31");
+        boolean[] bits = ByteUtils.fromBinaryString(String.format("%8s",Integer.toBinaryString((byte)specialAttack)).replaceAll(" ", "0").substring(3,8));
+        this.specialAttack = bits;
+        for (int i = 0; i < bits.length; i++) {
+            this.bits[32-25+i] = bits[i];
+        }
         this.misc.updateIndividualValues(this);
     }
 
     public void setSpecialDefense(int specialDefense) {
-        //TODO
+        if(specialDefense>31) throw new IllegalArgumentException("IV max is 31");
+        boolean[] bits = ByteUtils.fromBinaryString(String.format("%8s",Integer.toBinaryString((byte)specialDefense)).replaceAll(" ", "0").substring(3,8));
+        this.specialDefense = bits;
+        for (int i = 0; i < bits.length; i++) {
+            this.bits[32-30+i] = bits[i];
+        }
         this.misc.updateIndividualValues(this);
     }
 
-    public static byte[] swap4Bytes(byte[] bytes) {
-        byte[] newBytes = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            newBytes[i] = bytes[bytes.length-1-i];
-        }
-        return newBytes;
-    }
 }
